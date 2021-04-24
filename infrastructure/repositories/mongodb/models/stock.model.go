@@ -2,6 +2,7 @@ package models
 
 import (
 	"context"
+	"strings"
 	"time"
 
 	logger "github.com/hthl85/aws-lambda-logger"
@@ -11,18 +12,24 @@ import (
 )
 
 type StockModel struct {
-	ID              *primitive.ObjectID      `bson:"_id,omitempty"`
-	IsActive        bool                     `bson:"isActive,omitempty"`
-	CreatedAt       int64                    `bson:"createdAt,omitempty"`
-	ModifiedAt      int64                    `bson:"modifiedAt,omitempty"`
-	Schema          string                   `bson:"schema,omitempty"`
-	Source          string                   `bson:"source,omitempty"`
-	Ticker          string                   `bson:"ticker,omitempty"`
-	Name            string                   `bson:"name,omitempty"`
-	Type            string                   `bson:"type,omitempty"`
-	Sectors         []*SectorModel           `bson:"sector,omitempty"`
-	Countries       []*CountryModel          `bson:"countries,omitempty"`
-	DividendHistory map[int64]*DividendModel `bson:"dividendHistory,omitempty"`
+	ID               *primitive.ObjectID      `bson:"_id,omitempty"`
+	IsActive         bool                     `bson:"isActive,omitempty"`
+	CreatedAt        int64                    `bson:"createdAt,omitempty"`
+	ModifiedAt       int64                    `bson:"modifiedAt,omitempty"`
+	Schema           string                   `bson:"schema,omitempty"`
+	Source           string                   `bson:"source,omitempty"`
+	Ticker           string                   `bson:"ticker,omitempty"`
+	Name             string                   `bson:"name,omitempty"`
+	Type             string                   `bson:"type,omitempty"`
+	AssetClass       string                   `bson:"assetClass,omitempty"`
+	DividendSchedule string                   `bson:"dividendSchedule,omitempty"`
+	Currency         string                   `bson:"currency,omitempty"`
+	AllocationStock  float64                  `bson:"allocationStock,omitempty"`
+	AllocationBond   float64                  `bson:"allocationBond,omitempty"`
+	AllocationCash   float64                  `bson:"allocationCash,omitempty"`
+	Sectors          []*SectorModel           `bson:"sector,omitempty"`
+	Countries        []*CountryModel          `bson:"countries,omitempty"`
+	DividendHistory  map[int64]*DividendModel `bson:"dividendHistory,omitempty"`
 }
 
 // DividendModel struct
@@ -64,6 +71,22 @@ func NewStockModel(ctx context.Context, l logger.ContextLog, e *entities.Vanguar
 		m.Name = e.Name
 	}
 
+	if e.AssetClass != "" {
+		m.AssetClass = strings.ToUpper(e.AssetClass)
+	}
+
+	if e.DividendSchedule != "" {
+		m.DividendSchedule = strings.ToUpper(e.DividendSchedule)
+	}
+
+	if e.Currency != "" {
+		m.Currency = strings.ToUpper(e.Currency)
+	}
+
+	m.AllocationStock = e.AllocationStock
+	m.AllocationBond = e.AllocationBond
+	m.AllocationCash = e.AllocationCash
+
 	// map countries entity to model
 	var countries []*CountryModel
 	for _, v := range e.Countries {
@@ -96,8 +119,7 @@ func NewStockModel(ctx context.Context, l logger.ContextLog, e *entities.Vanguar
 	m.DividendHistory = make(map[int64]*DividendModel)
 	for _, v := range e.DividendHistory {
 		dividend := &DividendModel{
-			PayoutRatio:    0,
-			Yield:          0,
+			Yield:          e.DistYield,
 			Dividend:       v.Amount,
 			ExDividendDate: v.AsOfDate,
 			RecordDate:     v.AsOfDate,

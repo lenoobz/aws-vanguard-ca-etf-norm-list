@@ -20,6 +20,10 @@ type VanguardOverview struct {
 	Price            float64             `json:"price,omitempty"`
 	ManagementFee    float64             `json:"managementFee,omitempty"`
 	MerFee           float64             `json:"merFee,omitempty"`
+	DistYield        float64             `json:"distYield,omitempty"`
+	AllocationStock  float64             `json:"allocationStock,omitempty"`
+	AllocationBond   float64             `json:"allocationBond,omitempty"`
+	AllocationCash   float64             `json:"allocationCash,omitempty"`
 	Sectors          []*SectorBreakdown  `json:"sectors,omitempty"`
 	Countries        []*CountryBreakdown `json:"countries,omitempty"`
 	DividendHistory  []*DividendHistory  `json:"dividendHistory,omitempty"`
