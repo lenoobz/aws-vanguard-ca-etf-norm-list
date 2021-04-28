@@ -11,6 +11,7 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
+// StockModel struct
 type StockModel struct {
 	ID               *primitive.ObjectID      `bson:"_id,omitempty"`
 	IsActive         bool                     `bson:"isActive,omitempty"`
@@ -27,7 +28,7 @@ type StockModel struct {
 	AllocationStock  float64                  `bson:"allocationStock,omitempty"`
 	AllocationBond   float64                  `bson:"allocationBond,omitempty"`
 	AllocationCash   float64                  `bson:"allocationCash,omitempty"`
-	Sectors          []*SectorModel           `bson:"sector,omitempty"`
+	Sectors          []*SectorModel           `bson:"sectors,omitempty"`
 	Countries        []*CountryModel          `bson:"countries,omitempty"`
 	DividendHistory  map[int64]*DividendModel `bson:"dividendHistory,omitempty"`
 }
