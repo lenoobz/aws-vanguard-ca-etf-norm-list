@@ -16,7 +16,7 @@ var AppConf = AppConfig{
 		SchemaVersion: "1",
 		Colnames: map[string]string{
 			"overview": "vanguard_fund_overview",
-			"stock":    "securities",
+			"asset":    "assets",
 		},
 	},
 }

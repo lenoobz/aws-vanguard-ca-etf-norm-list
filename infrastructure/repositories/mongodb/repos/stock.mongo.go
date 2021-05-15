@@ -3,7 +3,6 @@ package repos
 import (
 	"context"
 	"fmt"
-	"strings"
 	"time"
 
 	logger "github.com/hthl85/aws-lambda-logger"
@@ -157,54 +156,14 @@ func (r *StockMongo) InsertStock(ctx context.Context, fund *entities.VanguardOve
 	ctx, cancel := createContext(ctx, r.conf.TimeoutMS)
 	defer cancel()
 
-	savedStock, err := r.findStockByTicker(ctx, fund.Ticker)
+	m, err := models.NewStockModel(ctx, r.log, fund)
 	if err != nil {
-		r.log.Error(ctx, "find stock by ticker failed", "error", err, "ticker", fund.Ticker)
+		r.log.Error(ctx, "create model failed", "error", err)
 		return err
-	}
-
-	insertingStock, err := models.NewStockModel(ctx, r.log, fund)
-	if err != nil {
-		r.log.Error(ctx, "create model failed", "error", err, "ticker", fund.Ticker)
-		return err
-	}
-
-	if savedStock != nil {
-		// Copy dividend history from saved stock to inserting stock
-		for k, v := range savedStock.DividendHistory {
-			if _, f := insertingStock.DividendHistory[k]; !f {
-				insertingStock.DividendHistory[k] = v
-			}
-		}
-	}
-
-	if err = r.insertStock(ctx, insertingStock); err != nil {
-		r.log.Error(ctx, "insert stock failed", "error", err, "ticker", fund.Ticker)
-		return err
-	}
-
-	return nil
-}
-
-///////////////////////////////////////////////////////////
-// Implement helper function
-///////////////////////////////////////////////////////////
-
-// createContext create a new context with timeout
-func createContext(ctx context.Context, t uint64) (context.Context, context.CancelFunc) {
-	timeout := time.Duration(t) * time.Millisecond
-	return context.WithTimeout(ctx, timeout*time.Millisecond)
-}
-
-// insertStock inserts new stock
-func (r *StockMongo) insertStock(ctx context.Context, m *models.StockModel) error {
-	if m == nil {
-		r.log.Error(ctx, "invalid param")
-		return fmt.Errorf("invalid param")
 	}
 
 	// what collection we are going to use
-	colname, ok := r.conf.Colnames[consts.VANGUARD_FUND_COL]
+	colname, ok := r.conf.Colnames[consts.ASSET_COL]
 	if !ok {
 		r.log.Error(ctx, "cannot find collection name")
 		return fmt.Errorf("cannot find collection name")
@@ -236,7 +195,7 @@ func (r *StockMongo) insertStock(ctx context.Context, m *models.StockModel) erro
 
 	opts := options.Update().SetUpsert(true)
 
-	_, err := col.UpdateOne(ctx, filter, update, opts)
+	_, err = col.UpdateOne(ctx, filter, update, opts)
 	if err != nil {
 		r.log.Error(ctx, "update one failed", "error", err)
 		return err
@@ -245,38 +204,12 @@ func (r *StockMongo) insertStock(ctx context.Context, m *models.StockModel) erro
 	return nil
 }
 
-// findStockByTicker finds stock of a given ticker
-func (r *StockMongo) findStockByTicker(ctx context.Context, ticker string) (*models.StockModel, error) {
-	// what collection we are going to use
-	colname, ok := r.conf.Colnames[consts.VANGUARD_FUND_COL]
-	if !ok {
-		r.log.Error(ctx, "cannot find collection name")
-		return nil, fmt.Errorf("cannot find collection name")
-	}
-	col := r.db.Collection(colname)
+///////////////////////////////////////////////////////////
+// Implement helper function
+///////////////////////////////////////////////////////////
 
-	// filter
-	filter := bson.D{
-		{
-			Key:   "ticker",
-			Value: strings.ToUpper(ticker),
-		},
-	}
-
-	// find options
-	findOptions := options.FindOne()
-
-	var stock models.StockModel
-	if err := col.FindOne(ctx, filter, findOptions).Decode(&stock); err != nil {
-		// ErrNoDocuments means that the filter did not match any documents in the collection
-		if err == mongo.ErrNoDocuments {
-			r.log.Info(ctx, "stock not found", "ticker", ticker)
-			return nil, nil
-		}
-
-		r.log.Error(ctx, "decode find one failed", "error", err, "ticker", ticker)
-		return nil, err
-	}
-
-	return &stock, nil
+// createContext create a new context with timeout
+func createContext(ctx context.Context, t uint64) (context.Context, context.CancelFunc) {
+	timeout := time.Duration(t) * time.Millisecond
+	return context.WithTimeout(ctx, timeout*time.Millisecond)
 }

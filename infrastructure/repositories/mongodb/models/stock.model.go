@@ -3,7 +3,6 @@ package models
 import (
 	"context"
 	"strings"
-	"time"
 
 	logger "github.com/hthl85/aws-lambda-logger"
 	"github.com/hthl85/aws-vanguard-ca-etf-normalizer/consts"
@@ -13,50 +12,20 @@ import (
 
 // StockModel struct
 type StockModel struct {
-	ID               *primitive.ObjectID      `bson:"_id,omitempty"`
-	IsActive         bool                     `bson:"isActive,omitempty"`
-	CreatedAt        int64                    `bson:"createdAt,omitempty"`
-	ModifiedAt       int64                    `bson:"modifiedAt,omitempty"`
-	Schema           string                   `bson:"schema,omitempty"`
-	Source           string                   `bson:"source,omitempty"`
-	Ticker           string                   `bson:"ticker,omitempty"`
-	Name             string                   `bson:"name,omitempty"`
-	Type             string                   `bson:"type,omitempty"`
-	AssetClass       string                   `bson:"assetClass,omitempty"`
-	DividendSchedule string                   `bson:"dividendSchedule,omitempty"`
-	Currency         string                   `bson:"currency,omitempty"`
-	AllocationStock  float64                  `bson:"allocationStock,omitempty"`
-	AllocationBond   float64                  `bson:"allocationBond,omitempty"`
-	AllocationCash   float64                  `bson:"allocationCash,omitempty"`
-	Sectors          []*SectorModel           `bson:"sectors,omitempty"`
-	Countries        []*CountryModel          `bson:"countries,omitempty"`
-	DividendHistory  map[int64]*DividendModel `bson:"dividendHistory,omitempty"`
-}
-
-// DividendModel struct
-type DividendModel struct {
-	PayoutRatio    float64    `bson:"payoutRatio,omitempty"`
-	Yield          float64    `bson:"yield,omitempty"`
-	Dividend       float64    `bson:"dividend,omitempty"`
-	ExDividendDate *time.Time `bson:"exDividendDate,omitempty"`
-	RecordDate     *time.Time `bson:"recordDate,omitempty"`
-	DividendDate   *time.Time `bson:"payoutDate,omitempty"`
-}
-
-// SectorModel struct
-type SectorModel struct {
-	SectorCode  string  `bson:"sectorCode,omitempty"`
-	SectorName  string  `bson:"sectorName,omitempty"`
-	FundPercent float64 `bson:"fundPercent,omitempty"`
-}
-
-// CountryModel struct
-type CountryModel struct {
-	CountryCode     string  `bson:"countryCode,omitempty"`
-	CountryName     string  `bson:"countryName,omitempty"`
-	HoldingStatCode string  `bson:"holdingStatCode,omitempty"`
-	FundMktPercent  float64 `bson:"fundMktPercent,omitempty"`
-	FundTnaPercent  float64 `bson:"fundTnaPercent,omitempty"`
+	ID              *primitive.ObjectID `bson:"_id,omitempty"`
+	IsActive        bool                `bson:"isActive,omitempty"`
+	CreatedAt       int64               `bson:"createdAt,omitempty"`
+	ModifiedAt      int64               `bson:"modifiedAt,omitempty"`
+	Schema          string              `bson:"schema,omitempty"`
+	Source          string              `bson:"source,omitempty"`
+	Ticker          string              `bson:"ticker,omitempty"`
+	Name            string              `bson:"name,omitempty"`
+	Type            string              `bson:"type,omitempty"`
+	AssetClass      string              `bson:"assetClass,omitempty"`
+	Currency        string              `bson:"currency,omitempty"`
+	AllocationStock float64             `bson:"allocationStock,omitempty"`
+	AllocationBond  float64             `bson:"allocationBond,omitempty"`
+	AllocationCash  float64             `bson:"allocationCash,omitempty"`
 }
 
 // NewStockModel create stock model
@@ -76,10 +45,6 @@ func NewStockModel(ctx context.Context, l logger.ContextLog, e *entities.Vanguar
 		m.AssetClass = strings.ToUpper(e.AssetClass)
 	}
 
-	if e.DividendSchedule != "" {
-		m.DividendSchedule = strings.ToUpper(e.DividendSchedule)
-	}
-
 	if e.Currency != "" {
 		m.Currency = strings.ToUpper(e.Currency)
 	}
@@ -87,49 +52,6 @@ func NewStockModel(ctx context.Context, l logger.ContextLog, e *entities.Vanguar
 	m.AllocationStock = e.AllocationStock
 	m.AllocationBond = e.AllocationBond
 	m.AllocationCash = e.AllocationCash
-
-	// map countries entity to model
-	var countries []*CountryModel
-	for _, v := range e.Countries {
-		country := &CountryModel{
-			CountryCode:     v.CountryCode,
-			CountryName:     v.CountryName,
-			HoldingStatCode: v.HoldingStatCode,
-			FundMktPercent:  v.FundMktPercent,
-			FundTnaPercent:  v.FundTnaPercent,
-		}
-
-		countries = append(countries, country)
-	}
-	m.Countries = countries
-
-	// map sectors entity to model
-	var sectors []*SectorModel
-	for _, v := range e.Sectors {
-		sector := &SectorModel{
-			SectorCode:  v.SectorCode,
-			SectorName:  v.SectorName,
-			FundPercent: v.FundPercent,
-		}
-
-		sectors = append(sectors, sector)
-	}
-	m.Sectors = sectors
-
-	// map dividen history entity to model
-	m.DividendHistory = make(map[int64]*DividendModel)
-	for _, v := range e.DividendHistory {
-		dividend := &DividendModel{
-			Yield:          e.DistYield,
-			Dividend:       v.Amount,
-			ExDividendDate: v.AsOfDate,
-			RecordDate:     v.AsOfDate,
-			DividendDate:   v.AsOfDate,
-		}
-
-		dividendTime := v.AsOfDate.Unix()
-		m.DividendHistory[dividendTime] = dividend
-	}
 
 	return m, nil
 }
