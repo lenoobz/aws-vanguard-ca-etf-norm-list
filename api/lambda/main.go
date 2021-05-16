@@ -5,9 +5,9 @@ import (
 
 	"github.com/aws/aws-lambda-go/lambda"
 	logger "github.com/hthl85/aws-lambda-logger"
-	"github.com/hthl85/aws-vanguard-ca-etf-normalizer/config"
-	"github.com/hthl85/aws-vanguard-ca-etf-normalizer/infrastructure/repositories/mongodb/repos"
-	"github.com/hthl85/aws-vanguard-ca-etf-normalizer/usecase/stock"
+	"github.com/hthl85/aws-vanguard-ca-etf-norm-list/config"
+	"github.com/hthl85/aws-vanguard-ca-etf-norm-list/infrastructure/repositories/mongodb/repos"
+	"github.com/hthl85/aws-vanguard-ca-etf-norm-list/usecase/stock"
 )
 
 func main() {

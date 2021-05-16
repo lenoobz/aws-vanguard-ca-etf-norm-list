@@ -5,8 +5,8 @@ import (
 	"strings"
 
 	logger "github.com/hthl85/aws-lambda-logger"
-	"github.com/hthl85/aws-vanguard-ca-etf-normalizer/consts"
-	"github.com/hthl85/aws-vanguard-ca-etf-normalizer/entities"
+	"github.com/hthl85/aws-vanguard-ca-etf-norm-list/consts"
+	"github.com/hthl85/aws-vanguard-ca-etf-norm-list/entities"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 

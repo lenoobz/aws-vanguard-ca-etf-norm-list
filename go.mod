@@ -1,4 +1,4 @@
-module github.com/hthl85/aws-vanguard-ca-etf-normalizer
+module github.com/hthl85/aws-vanguard-ca-etf-norm-list
 
 go 1.16
 

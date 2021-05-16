@@ -6,10 +6,10 @@ import (
 	"time"
 
 	logger "github.com/hthl85/aws-lambda-logger"
-	"github.com/hthl85/aws-vanguard-ca-etf-normalizer/config"
-	"github.com/hthl85/aws-vanguard-ca-etf-normalizer/consts"
-	"github.com/hthl85/aws-vanguard-ca-etf-normalizer/entities"
-	"github.com/hthl85/aws-vanguard-ca-etf-normalizer/infrastructure/repositories/mongodb/models"
+	"github.com/hthl85/aws-vanguard-ca-etf-norm-list/config"
+	"github.com/hthl85/aws-vanguard-ca-etf-norm-list/consts"
+	"github.com/hthl85/aws-vanguard-ca-etf-norm-list/entities"
+	"github.com/hthl85/aws-vanguard-ca-etf-norm-list/infrastructure/repositories/mongodb/models"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
@@ -98,7 +98,7 @@ func (r *StockMongo) FindOverviews(ctx context.Context) ([]*entities.VanguardOve
 	defer cancel()
 
 	// what collection we are going to use
-	colname, ok := r.conf.Colnames[consts.VANGUARD_OVERVIEW_COL]
+	colname, ok := r.conf.Colnames[consts.VANGUARD_FUND_OVERVIEW_COLLECTION]
 	if !ok {
 		r.log.Error(ctx, "cannot find collection name")
 		return nil, fmt.Errorf("cannot find collection name")
@@ -163,7 +163,7 @@ func (r *StockMongo) InsertStock(ctx context.Context, fund *entities.VanguardOve
 	}
 
 	// what collection we are going to use
-	colname, ok := r.conf.Colnames[consts.ASSET_COL]
+	colname, ok := r.conf.Colnames[consts.ASSETS_COLLECTION]
 	if !ok {
 		r.log.Error(ctx, "cannot find collection name")
 		return fmt.Errorf("cannot find collection name")

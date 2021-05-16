@@ -3,7 +3,7 @@ package stock
 import (
 	"context"
 
-	"github.com/hthl85/aws-vanguard-ca-etf-normalizer/entities"
+	"github.com/hthl85/aws-vanguard-ca-etf-norm-list/entities"
 )
 
 ///////////////////////////////////////////////////////////
