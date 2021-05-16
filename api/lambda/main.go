@@ -7,7 +7,7 @@ import (
 	logger "github.com/hthl85/aws-lambda-logger"
 	"github.com/hthl85/aws-vanguard-ca-etf-norm-list/config"
 	"github.com/hthl85/aws-vanguard-ca-etf-norm-list/infrastructure/repositories/mongodb/repos"
-	"github.com/hthl85/aws-vanguard-ca-etf-norm-list/usecase/stock"
+	"github.com/hthl85/aws-vanguard-ca-etf-norm-list/usecase/assets"
 )
 
 func main() {
@@ -21,14 +21,14 @@ func main() {
 	defer zap.Close()
 
 	// create new repository
-	repo, err := repos.NewStockMongo(nil, zap, &appConf.Mongo)
+	repo, err := repos.NewAssetMongo(nil, zap, &appConf.Mongo)
 	if err != nil {
-		log.Fatal("create fund mongo repo failed")
+		log.Fatal("create asset mongo repo failed")
 	}
 	defer repo.Close()
 
 	// create new service
-	svc := stock.NewService(repo, zap)
+	svc := assets.NewService(repo, zap)
 
-	lambda.Start(svc.PopulateStocks)
+	lambda.Start(svc.PopulateAssets)
 }

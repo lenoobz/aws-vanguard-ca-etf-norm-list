@@ -1,4 +1,4 @@
-package stock
+package assets
 
 import (
 	"context"
@@ -12,12 +12,12 @@ import (
 
 // Reader interface
 type Reader interface {
-	FindOverviews(context.Context) ([]*entities.VanguardOverview, error)
+	FindFundOverviews(context.Context) ([]*entities.VanguardOverview, error)
 }
 
 // Writer interface
 type Writer interface {
-	InsertStock(context.Context, *entities.VanguardOverview) error
+	InsertAsset(context.Context, *entities.VanguardOverview) error
 }
 
 // Repo interface

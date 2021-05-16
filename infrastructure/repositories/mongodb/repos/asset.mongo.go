@@ -15,18 +15,18 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-// StockMongo struct
-type StockMongo struct {
+// AssetMongo struct
+type AssetMongo struct {
 	db     *mongo.Database
 	client *mongo.Client
 	log    logger.ContextLog
 	conf   *config.MongoConfig
 }
 
-// NewStockMongo creates new stock mongo repo
-func NewStockMongo(db *mongo.Database, l logger.ContextLog, conf *config.MongoConfig) (*StockMongo, error) {
+// NewAssetMongo creates new asset mongo repo
+func NewAssetMongo(db *mongo.Database, l logger.ContextLog, conf *config.MongoConfig) (*AssetMongo, error) {
 	if db != nil {
-		return &StockMongo{
+		return &AssetMongo{
 			db:   db,
 			log:  l,
 			conf: conf,
@@ -65,7 +65,7 @@ func NewStockMongo(db *mongo.Database, l logger.ContextLog, conf *config.MongoCo
 		return nil, err
 	}
 
-	return &StockMongo{
+	return &AssetMongo{
 		db:     client.Database(conf.Dbname),
 		client: client,
 		log:    l,
@@ -74,7 +74,7 @@ func NewStockMongo(db *mongo.Database, l logger.ContextLog, conf *config.MongoCo
 }
 
 // Close disconnect from database
-func (r *StockMongo) Close() {
+func (r *AssetMongo) Close() {
 	ctx := context.Background()
 	r.log.Info(ctx, "close mongo client")
 
@@ -91,8 +91,8 @@ func (r *StockMongo) Close() {
 // Implement repo interface
 ///////////////////////////////////////////////////////////
 
-// FindOverviews finds all fund overviews
-func (r *StockMongo) FindOverviews(ctx context.Context) ([]*entities.VanguardOverview, error) {
+// FindFundOverviews finds fund overviews
+func (r *AssetMongo) FindFundOverviews(ctx context.Context) ([]*entities.VanguardOverview, error) {
 	// create new context for the query
 	ctx, cancel := createContext(ctx, r.conf.TimeoutMS)
 	defer cancel()
@@ -150,13 +150,13 @@ func (r *StockMongo) FindOverviews(ctx context.Context) ([]*entities.VanguardOve
 	return funds, nil
 }
 
-// InsertStock insert new stock stock
-func (r *StockMongo) InsertStock(ctx context.Context, fund *entities.VanguardOverview) error {
+// InsertAsset insert new asset
+func (r *AssetMongo) InsertAsset(ctx context.Context, fund *entities.VanguardOverview) error {
 	// create new context for the query
 	ctx, cancel := createContext(ctx, r.conf.TimeoutMS)
 	defer cancel()
 
-	m, err := models.NewStockModel(ctx, r.log, fund)
+	m, err := models.NewAssetModel(ctx, r.log, fund)
 	if err != nil {
 		r.log.Error(ctx, "create model failed", "error", err)
 		return err

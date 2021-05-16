@@ -1,4 +1,4 @@
-package stock
+package assets
 
 import (
 	"context"
@@ -20,18 +20,18 @@ func NewService(r Repo, l logger.ContextLog) *Service {
 	}
 }
 
-// PopulateStocks populate stocks data
-func (s *Service) PopulateStocks(ctx context.Context) error {
-	s.log.Info(ctx, "populating stocks")
+// PopulateAssets populate assets
+func (s *Service) PopulateAssets(ctx context.Context) error {
+	s.log.Info(ctx, "populating assets")
 
-	overviews, err := s.repo.FindOverviews(ctx)
+	overviews, err := s.repo.FindFundOverviews(ctx)
 	if err != nil {
 		s.log.Error(ctx, "find overviews failed", "error", err)
 		return err
 	}
 
 	for _, o := range overviews {
-		if err := s.repo.InsertStock(ctx, o); err != nil {
+		if err := s.repo.InsertAsset(ctx, o); err != nil {
 			s.log.Error(ctx, "insert stock failed", "error", err)
 		}
 	}
