@@ -29,6 +29,7 @@ type AssetModel struct {
 	DividendSchedule string              `bson:"dividendSchedule,omitempty"`
 	Yield12Month     float64             `bson:"yield12Month,omitempty"`
 	DistYield        float64             `bson:"distYield,omitempty"`
+	DistAmount       float64             `bson:"distAmount,omitempty"`
 }
 
 // NewAssetModel create stock model
@@ -59,6 +60,7 @@ func NewAssetModel(ctx context.Context, l logger.ContextLog, e *entities.Vanguar
 	m.DividendSchedule = e.DividendSchedule
 	m.Yield12Month = e.Yield12Month
 	m.DistYield = e.DistYield
+	m.DistAmount = e.DistAmount
 
 	return m, nil
 }
