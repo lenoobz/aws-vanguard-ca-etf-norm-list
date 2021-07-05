@@ -156,7 +156,7 @@ func (r *AssetMongo) InsertAsset(ctx context.Context, fund *entities.VanguardOve
 	ctx, cancel := createContext(ctx, r.conf.TimeoutMS)
 	defer cancel()
 
-	m, err := models.NewAssetModel(ctx, r.log, fund)
+	m, err := models.NewAssetModel(ctx, r.log, fund, r.conf.SchemaVersion)
 	if err != nil {
 		r.log.Error(ctx, "create model failed", "error", err)
 		return err
@@ -169,10 +169,6 @@ func (r *AssetMongo) InsertAsset(ctx context.Context, fund *entities.VanguardOve
 		return fmt.Errorf("cannot find collection name")
 	}
 	col := r.db.Collection(colname)
-
-	m.IsActive = true
-	m.Schema = r.conf.SchemaVersion
-	m.ModifiedAt = time.Now().UTC().Unix()
 
 	filter := bson.D{{
 		Key:   "ticker",
