@@ -3,7 +3,7 @@ package assets
 import (
 	"context"
 
-	"github.com/hthl85/aws-vanguard-ca-etf-norm-list/entities"
+	"github.com/lenoobz/aws-vanguard-ca-etf-norm-list/entities"
 )
 
 ///////////////////////////////////////////////////////////

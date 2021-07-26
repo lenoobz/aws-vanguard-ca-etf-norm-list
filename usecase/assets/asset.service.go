@@ -3,7 +3,7 @@ package assets
 import (
 	"context"
 
-	logger "github.com/hthl85/aws-lambda-logger"
+	logger "github.com/lenoobz/aws-lambda-logger"
 )
 
 // Service sector
